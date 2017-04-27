@@ -15,9 +15,9 @@
     "flow": "flow check src"
   },
   "devDependencies": {
-    "babel-preset-fbjs": "file:../babel-preset-fbjs",
+    "babel-preset-fbjs": "file:./babel-preset-fbjs",
     "del": "^2.2.0",
-    "fbjs-scripts": "file:../fbjs-scripts",
+    "fbjs-scripts": "file:./fbjs-scripts",
     "flow-bin": "^0.38.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
