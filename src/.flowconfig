@@ -1,0 +1,11 @@
+[ignore]
+.*/__tests__/.*
+
+[include]
+../node_modules
+
+[options]
+module.system=haste
+
+[version]
+^0.38.0
