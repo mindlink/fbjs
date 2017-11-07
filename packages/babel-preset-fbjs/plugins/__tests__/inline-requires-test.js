@@ -1,10 +1,8 @@
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -47,11 +45,57 @@ describe('inline-requires', function() {
       ]);
     }).toThrow();
   });
+
+  it('should properly handle identifiers declared before their corresponding require statement', function() {
+    compare([
+      'function foo() {',
+      '  bar();',
+      '}',
+      'var bar = require("baz");',
+      'foo();',
+      'bar();',
+    ], [
+      'function foo() {',
+      '  require("baz")();',
+      '}',
+      'foo();',
+      'require("baz")();',
+    ]);
+  });
+
+  it('should be compatible with other transforms like transform-es2015-modules-commonjs', function() {
+    compare([
+      'import Imported from "foo";',
+      'console.log(Imported);',
+    ], [
+      'var _foo2 = _interopRequireDefault(require(\"foo\"));',
+      'function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }',
+      'console.log(_foo2.default);',
+    ]);
+  });
+
+  it('should be compatible with `transform-es2015-modules-commonjs` when using named imports', function() {
+    compare(`
+      import { a } from './a';
+
+      var D = {
+        b: function(c) { c ? a(c.toString()) : a('No c!'); },
+      };`, [
+      'var D = {',
+      '  b: function (c) {',
+      `    c ? (0, require('./a').a)(c.toString()) : (0, require('./a').a)('No c!');`,
+      '  }',
+      '};',
+    ]);
+  });
 });
 
 function transform(input) {
   return babel.transform(normalise(input), {
-    plugins: [require('../inline-requires.js')],
+    plugins: [
+      [require('babel-plugin-transform-es2015-modules-commonjs'), {strict: false}],
+      require('../inline-requires.js')
+    ],
   }).code;
 }
 
@@ -66,5 +110,5 @@ function compare(input, output) {
 }
 
 function strip(input) {
-  return input.replace(/\s/g, '');
+  return input.trim().replace(/\n\n/g, '\n');
 }

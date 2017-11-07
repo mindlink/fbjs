@@ -1,13 +1,12 @@
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @providesModule keyMirror
  * @typechecks static-only
+ * @flow
  */
 
 'use strict';
@@ -32,7 +31,7 @@ var invariant = require('invariant');
  * @param {object} obj
  * @return {object}
  */
-var keyMirror = function(obj) {
+var keyMirror = function<T: {}>(obj: T): $ObjMapi<T, <K>(K) => K> {
   var ret = {};
   var key;
   invariant(

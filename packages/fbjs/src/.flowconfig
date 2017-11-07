@@ -4,8 +4,11 @@
 [include]
 ../node_modules
 
+[libs]
+../flow/lib
+
 [options]
 module.system=haste
 
 [version]
-^0.38.0
+^0.46.0

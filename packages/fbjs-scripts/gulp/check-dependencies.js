@@ -1,10 +1,8 @@
 /**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 'use strict';
@@ -35,11 +33,15 @@ module.exports = function(opts) {
     });
 
     outdated.on('exit', function(code) {
-      if (code !== 0) {
+      // npm outdated now exits with non-zero when there are outdated deps, so
+      // we'll handle that gracefully across npm versions and just assume that
+      // things are fine unless we can't parse stdout as JSON.
+      try {
+        var outdatedData = JSON.parse(data);
+      } catch (e) {
         cb(new gutil.PluginError(PLUGIN_NAME, 'npm broke'));
       }
 
-      var outdatedData = JSON.parse(data);
       var failures = [];
       Object.keys(outdatedData).forEach(function(name) {
         var current = outdatedData[name].current;
